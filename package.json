@@ -9,7 +9,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "brew": "0.0.8",
     "express": "^4.17.1",
+    "mongoose": "~4.4",
+    "mongoose-auto-increment": "^5.0.1",
     "twilio": "^3.37.1"
   }
 }
