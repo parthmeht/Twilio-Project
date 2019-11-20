@@ -5,11 +5,11 @@ var QuestionsSchema = new mongoose.Schema({
     trim: true
   },
   message_step:{
-    type: Number,
+    type: String,
     trim: true
   },
   invalid_text:{
-    type: Text,
+    type: String,
     trim: true
   },
   symptoms:{

@@ -15,6 +15,10 @@ var UserSchema = new mongoose.Schema({
   created:{
     type: Date,
     trim: true
+  },
+  currentQuestion:{
+    type: String,
+    trim: true
   }
 });
 module.exports = mongoose.model('users', UserSchema);

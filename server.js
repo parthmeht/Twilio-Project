@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const app = express();
 var mongoose = require('mongoose');
 var userUtility = require('./utilities/userUtility.js');
+var questionUtility = require('./utilities/questionsUtility.js');
 mongoose.connect('mongodb://localhost/Twilio', {
   useNewUrlParser: true
 });
@@ -19,15 +20,55 @@ db.on('connected', function() {
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.post('/', (req, res) => {
+app.post('/', async function(req, res) {
   const twiml = new MessagingResponse();
   //  console.log(req.body.Body);
   // console.log(req.body);
-  // console.log(await userUtility.checkUser);
-  if(userUtility.isValid)
-    twiml.message("Welcome to the Jungle");
-  else
-    twiml.message("You are in the Jungle");
+   //console.log("response "+userUtility.checkUser(req.body.From));
+   var data = await userUtility.checkUser(req.body.From);
+
+   if(data){
+      if(data.rounds == '1'){
+        if(req.body.Body == 'START'){
+          var updateData = await userUtility.updateUser(req.body.From, data.rounds);
+          var ques = await questionUtility.questionNumber(data.rounds);
+          if(ques)
+            twiml.message(ques.message_text);
+        }else{
+          twiml.message('Invalid Input');
+        }
+      }
+       // if(data.rounds == '0'){
+       //   if(req.body.Body == 'START')
+       // }
+       // var ques = await questionUtility.questionNumber(data.rounds);
+       // console.log(data.rounds + " -- " + ques);
+       // if(ques)
+       //   twiml.message(ques.message_text);
+    }else{
+      if(req.body.Body == 'START'){
+        var userData = await userUtility.addUser(req.body.From);
+        var ques = await questionUtility.questionNumber('0');
+        if(ques)
+          twiml.message(ques.message_text);
+      }else {
+        twiml.message('You are not enrolled. Send START to enroll');
+      }
+
+    }
+
+   // if(req.body.Body == 'START'){
+   //
+   //
+   // }
+   //
+   // var ques = await questionUtility.questionNumber('1');
+   // if(ques)
+   //  twiml.message(ques.message_text);
+
+
+
+
 
   // if (req.body.Body == 'hello') {
   //   twiml.message('Hi!');
