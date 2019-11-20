@@ -10,6 +10,7 @@ var UserSchema = new mongoose.Schema({
   },
   phone:{
     type: Number,
+    unique: true,
     trim: true
   },
   created:{

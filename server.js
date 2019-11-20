@@ -7,6 +7,7 @@ const app = express();
 var mongoose = require('mongoose');
 var userUtility = require('./utilities/userUtility.js');
 var questionUtility = require('./utilities/questionsUtility.js');
+var symptomUtility = require('./utilities/symptomsUtility.js');
 mongoose.connect('mongodb://localhost/Twilio', {
   useNewUrlParser: true
 });
@@ -32,10 +33,73 @@ app.post('/', async function(req, res) {
         if(req.body.Body == 'START'){
           var updateData = await userUtility.updateUser(req.body.From, data.rounds);
           var ques = await questionUtility.questionNumber(data.rounds);
-          if(ques)
-            twiml.message(ques.message_text);
+          var sym = await symptomUtility.allSymptoms();
+          if(ques && sym)
+            twiml.message(ques.message_text + sym);
         }else{
           twiml.message('Invalid Input');
+        }
+      }else if(data.rounds == '2'){
+        if(req.body.Body == '0'){
+          var ques = await questionUtility.questionNumber('4');
+          twiml.message(ques.message_text);
+        }else if(req.body.Body == '1'){
+
+          var ques = await questionUtility.questionNumber(data.rounds);
+          var sym = await symptomUtility.symptomType('1');
+          var updateData = await userUtility.updateUser(req.body.From, data.rounds);
+          twiml.message(ques.message_text + " " + sym.symptom + " in the last 24 hours.");
+        }else if(req.body.Body == '2'){
+
+          var ques = await questionUtility.questionNumber(data.rounds);
+          var sym = await symptomUtility.symptomType('2');
+          var updateData = await userUtility.updateUser(req.body.From, data.rounds);
+          twiml.message(ques.message_text + " " + sym.symptom + " in the last 24 hours.");
+        }else if(req.body.Body == '3'){
+
+          var ques = await questionUtility.questionNumber(data.rounds);
+          var sym = await symptomUtility.symptomType('3');
+          var updateData = await userUtility.updateUser(req.body.From, data.rounds);
+          twiml.message(ques.message_text + " " + sym.symptom + " in the last 24 hours.");
+        }else if(req.body.Body == '4'){
+
+          var ques = await questionUtility.questionNumber(data.rounds);
+          var sym = await symptomUtility.symptomType('4');
+          var updateData = await userUtility.updateUser(req.body.From, data.rounds);
+          twiml.message(ques.message_text + " " + sym.symptom + " in the last 24 hours.");
+        }else{
+          twiml.message('Please Select from 0 to 4');
+        }
+      }else if(data.rounds == '3'){
+        if(req.body.Body == '0'){
+          var ques = await questionUtility.questionNumber('4');
+          twiml.message(ques.message_text);
+        }else if(req.body.Body == '1'){
+
+          var ques = await questionUtility.questionNumber(data.rounds);
+          var sym = await symptomUtility.symptomType('1');
+          var updateData = await userUtility.updateUser(req.body.From, data.rounds);
+          twiml.message("You have a mild" + " " + sym.symptom);
+        }else if(req.body.Body == '2'){
+
+          var ques = await questionUtility.questionNumber(data.rounds);
+          var sym = await symptomUtility.symptomType('2');
+          var updateData = await userUtility.updateUser(req.body.From, data.rounds);
+          twiml.message("You have a mild" + " " + sym.symptom);
+        }else if(req.body.Body == '3'){
+
+          var ques = await questionUtility.questionNumber(data.rounds);
+          var sym = await symptomUtility.symptomType('3');
+          var updateData = await userUtility.updateUser(req.body.From, data.rounds);
+          twiml.message("You have a moderate" + " " + sym.symptom);
+        }else if(req.body.Body == '4'){
+
+          var ques = await questionUtility.questionNumber(data.rounds);
+          var sym = await symptomUtility.symptomType('4');
+          var updateData = await userUtility.updateUser(req.body.From, data.rounds);
+          twiml.message("You have a severe" + " " + sym.symptom);
+        }else{
+          twiml.message('You are fine.');
         }
       }
        // if(data.rounds == '0'){

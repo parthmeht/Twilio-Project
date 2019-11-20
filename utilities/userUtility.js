@@ -1,4 +1,5 @@
 var UserSchema = require('../model/userSchema.js');
+var User = require('mongoose').model('users');
 var checkUser = function(phoneNumber){
   console.log("Ew");
   return new Promise((resolve, reject)=>{
@@ -64,16 +65,17 @@ var addUser = function(phoneNumber){
 
 var updateUser = function(phoneNumber, rounds){
   return new Promise((resolve, reject)=>{
-    var userData = new UserSchema({
+    var usr = new UserSchema();
+    var userData = {
           rounds: rounds+1,
-          phone: phoneNumber,
-          currentQuestion: 0
-      });
-      userData.save(function(err) {
-      if(err)
-        console.log("ERROR WHILE SAVING USER");
-      else
-        console.log("Saved");
+      };
+      User.findOneAndUpdate({phone: phoneNumber}, userData).exec(function(err){
+        if(err){
+          console.log("ERROR "+err);
+        }
+        else {
+          console.log("Saved");
+        }
       });
       resolve(userData);
   });

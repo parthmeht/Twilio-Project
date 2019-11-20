@@ -1,11 +1,11 @@
 var mongoose = require('mongoose');
 var SymtomsSchema = new mongoose.Schema({
-  symptom_name:{
+  symptom:{
     type: String,
     trim: true
   },
   symptom_id:{
-    type: Number,
+    type: String,
     trim: true
   }
 });
