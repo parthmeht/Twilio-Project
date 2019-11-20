@@ -5,8 +5,8 @@ var SymtomsSchema = new mongoose.Schema({
     trim: true
   },
   symptom_id:{
-    type: String,
+    type: Number,
     trim: true
   }
 });
-module.exports = mongoose.model('symptoms', SymtomsSchema);
+module.exports = mongoose.model('Symptom', SymtomsSchema);

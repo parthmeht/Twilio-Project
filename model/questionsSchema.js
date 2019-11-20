@@ -5,7 +5,7 @@ var QuestionsSchema = new mongoose.Schema({
     trim: true
   },
   message_step:{
-    type: String,
+    type: Number,
     trim: true
   },
   invalid_text:{
@@ -17,4 +17,4 @@ var QuestionsSchema = new mongoose.Schema({
     trim: true
   }
 });
-module.exports = mongoose.model('questions', QuestionsSchema);
+module.exports = mongoose.model('Question', QuestionsSchema);

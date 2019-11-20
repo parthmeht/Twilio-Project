@@ -18,8 +18,13 @@ var UserSchema = new mongoose.Schema({
     trim: true
   },
   currentQuestion:{
+    type: Number,
+    trim: true
+  },
+  currentSympton: {
     type: String,
     trim: true
-  }
+  },
+  symptomHistory: [String]
 });
-module.exports = mongoose.model('users', UserSchema);
+module.exports = mongoose.model('User', UserSchema);

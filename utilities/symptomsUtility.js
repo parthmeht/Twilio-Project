@@ -12,13 +12,17 @@ var symptomType = function(symptomCode){
   })
 }
 
-var allSymptoms = function(){
+var allSymptoms = function(symptomHistory){
   return new Promise((resolve, reject) =>{
     SymptomsSchema.find({}).then(data => {
       console.log("Inside Questions " + data);
       var s = " ";
+      data = data.filter( function( el ) {
+        return symptomHistory.indexOf( el.symptom) < 0;
+      } );
       for (var i = 0; i < data.length; i++) {
-        s+= "\nPress " + data[i].symptom_id + " for " + data[i].symptom;
+        //if(symptomHistory.indexOf(data[i].symptom) == -1)
+          s+= "\nPress " + i + " for " + data[i].symptom;
       }
       resolve(s);
     }).catch(err => {
@@ -26,4 +30,14 @@ var allSymptoms = function(){
     });
   })
 }
+
+/*function difference(first, second) {
+  for (var i=0; i<first.length; i++) {
+      var index = first[i];
+      if ((index = first.indexOf(second[i])) !== -1) {
+          first.splice(index, 1);
+      }
+  }
+  return first;
+}*/
 module.exports = { symptomType: symptomType, allSymptoms: allSymptoms};
