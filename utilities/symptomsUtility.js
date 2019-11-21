@@ -12,7 +12,7 @@ var symptomType = function(symptomCode){
   })
 }
 
-var allSymptoms = function(symptomHistory){
+/*var allSymptoms = function(symptomHistory){
   return new Promise((resolve, reject) =>{
     SymptomsSchema.find({}).then(data => {
       console.log("Inside Questions " + data);
@@ -29,6 +29,18 @@ var allSymptoms = function(symptomHistory){
       return reject("Invalid text");
     });
   })
+}*/
+
+var allSymptoms = function(symptoms, symptomHistory){
+  var s = " ";
+  symptoms = symptoms.filter( function( el ) {
+    return symptomHistory.indexOf( el) < 0;
+  } );
+  for (var i = 0; i < symptoms.length; i++) {
+    //if(symptomHistory.indexOf(data[i].symptom) == -1)
+      s+= "\nPress " + i + " for " + symptoms[i];
+  }
+  return s;
 }
 
 /*function difference(first, second) {

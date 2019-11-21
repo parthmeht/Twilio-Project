@@ -27,7 +27,15 @@ var addUser = function (phoneNumber) {
       currentQuestion: 1,
       rounds: 1,
       symptomHistory: [],
-      currentSympton: null
+      currentSympton: null,
+      symptoms: [
+        "None",
+        "Headache",
+        "Dizziness",
+        "Nausea",
+        "Fatigue",
+        "Sadness"
+      ]
     });
     userData.save(function (err) {
       if (err)
@@ -39,14 +47,15 @@ var addUser = function (phoneNumber) {
   });
 }
 
-var updateUser = function (phoneNumber, rounds, currentQuestion, symptom, symptomHistory) {
+var updateUser = function (phoneNumber, rounds, currentQuestion, symptom, symptomHistory, symptoms) {
   return new Promise((resolve, reject) => {
     var usr = new UserSchema();
     var userData = {
       rounds: rounds,
       currentQuestion: currentQuestion,
       currentSympton: symptom,
-      symptomHistory: symptomHistory
+      symptomHistory: symptomHistory,
+      symptoms: symptoms
     };
     User.findOneAndUpdate({ phone: phoneNumber }, userData).exec(function (err) {
       if (err) {

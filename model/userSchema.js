@@ -25,6 +25,7 @@ var UserSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
-  symptomHistory: [String]
+  symptomHistory: [String],
+  symptoms: [String]
 });
 module.exports = mongoose.model('User', UserSchema);

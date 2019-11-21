@@ -32,14 +32,15 @@ app.post('/', async function (req, res) {
       if (data.currentQuestion == '2') {
         if (req.body.Body == '0') {
           var ques = await questionUtility.questionNumber(req.body.Body);
-          var updateData = await userUtility.updateUser(req.body.From, data.rounds, data.currentQuestion - 1, null, data.symptomHistory);
+          var updateData = await userUtility.updateUser(req.body.From, data.rounds, data.currentQuestion - 1, null, data.symptomHistory, data.symptoms);
           sendMessage(data.phone,ques.message_text);
         } else if (parseInt(req.body.Body, 10) <= 5 - data.symptomHistory.length) {
           console.log("round 2 - selection : " + req.body.Body);
           var ques = await questionUtility.questionNumber(data.currentQuestion);
-          var sym = await symptomUtility.symptomType(req.body.Body);
-          var updateData = await userUtility.updateUser(req.body.From, data.rounds, data.currentQuestion + 1, sym.symptom, data.symptomHistory);
-          sendMessage(data.phone,ques.message_text + " " + sym.symptom + " in the last 24 hours.");
+          //var sym = await symptomUtility.symptomType(req.body.Body);
+          var sym = data.symptoms[parseInt(req.body.Body, 10)];
+          var updateData = await userUtility.updateUser(req.body.From, data.rounds, data.currentQuestion + 1, sym, data.symptomHistory, data.symptoms);
+          sendMessage(data.phone,ques.message_text + " " + sym + " in the last 24 hours.");
         } else {
           var ques = await questionUtility.questionNumber(data.currentQuestion - 1);
           sendMessage(data.phone,ques.invalid_text);
@@ -48,35 +49,40 @@ app.post('/', async function (req, res) {
         if (req.body.Body == '0') {
           sendMessage(data.phone,"You do not have a " + data.currentSympton);
           data.symptomHistory.push(data.currentSympton);
-          var updateData = await userUtility.updateUser(req.body.From, data.rounds + 1, 1, null, data.symptomHistory);
+          var index = data.symptoms.indexOf(data.currentSympton);
+          data.symptoms.splice(index,1);
+          var updateData = await userUtility.updateUser(req.body.From, data.rounds + 1, 1, null, data.symptomHistory, data.symptoms);
           triggerNextRound();
         } else if (req.body.Body == '1' || req.body.Body == '2') {
           var ques = await questionUtility.questionNumber(data.currentQuestion);
           sendMessage(data.phone,"You have a mild" + " " + data.currentSympton);
           data.symptomHistory.push(data.currentSympton);
-          var updateData = await userUtility.updateUser(req.body.From, data.rounds + 1, 1, null, data.symptomHistory);
+          var index = data.symptoms.indexOf(data.currentSympton);
+          data.symptoms.splice(index,1);
+          var updateData = await userUtility.updateUser(req.body.From, data.rounds + 1, 1, null, data.symptomHistory, data.symptoms);
           triggerNextRound();
         } else if (req.body.Body == '3') {
           var ques = await questionUtility.questionNumber(data.currentQuestion);
           sendMessage(data.phone,"You have a moderate" + " " + data.currentSympton);
           data.symptomHistory.push(data.currentSympton);
-          var updateData = await userUtility.updateUser(req.body.From, data.rounds + 1, 1, null, data.symptomHistory);
+          var index = data.symptoms.indexOf(data.currentSympton);
+          data.symptoms.splice(index,1);
+          var updateData = await userUtility.updateUser(req.body.From, data.rounds + 1, 1, null, data.symptomHistory, data.symptoms);
           triggerNextRound();
         } else if (req.body.Body == '4') {
           var ques = await questionUtility.questionNumber(data.currentQuestion);
           sendMessage(data.phone,"You have a severe" + " " + data.currentSympton);
           data.symptomHistory.push(data.currentSympton);
-          var updateData = await userUtility.updateUser(req.body.From, data.rounds + 1, 1, null, data.symptomHistory);
+          var index = data.symptoms.indexOf(data.currentSympton);
+          data.symptoms.splice(index,1);
+          var updateData = await userUtility.updateUser(req.body.From, data.rounds + 1, 1, null, data.symptomHistory, data.symptoms);
           triggerNextRound();
         } else {
           var ques = await questionUtility.questionNumber(data.currentQuestion - 1);
           sendMessage(data.phone,ques.invalid_text);
         }
       }
-    } else if (data.rounds == 4) {
-      var ques = await questionUtility.questionNumber(4);
-      sendMessage(data.phone,ques.message_text);
-    }
+    } 
   } else {
     if (req.body.Body == 'START') {
       var userData = await userUtility.addUser(req.body.From);
@@ -101,12 +107,18 @@ app.post('/', async function (req, res) {
   }
 
   async function triggerNextRound(){
-    var ques = await questionUtility.questionNumber(1);
-    var sym = await symptomUtility.allSymptoms(data.symptomHistory);
-    var updateData = await userUtility.updateUser(req.body.From, data.rounds, data.currentQuestion + 1, null, data.symptomHistory);
-    if (ques && sym) {
-      bodyMessage = ques.message_text + sym;
-      sendMessage(req.body.From,bodyMessage);
+    if(data.rounds+1>3){
+      var ques = await questionUtility.questionNumber(4);
+      sendMessage(data.phone,ques.message_text);
+    }else{
+      data = await userUtility.checkUser(req.body.From);
+      var ques = await questionUtility.questionNumber(1);
+      var sym = await symptomUtility.allSymptoms(data.symptoms, data.symptomHistory);
+      var updateData = await userUtility.updateUser(req.body.From, data.rounds, data.currentQuestion + 1, null, data.symptomHistory, data.symptoms);
+      if (ques && sym) {
+        bodyMessage = ques.message_text + sym;
+        sendMessage(req.body.From,bodyMessage);
+      }
     }
   }
   res.end();
